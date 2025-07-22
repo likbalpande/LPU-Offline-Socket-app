@@ -63,7 +63,7 @@ const App = () => {
             username: selectedChatUsername,
         });
 
-        setMessages("");
+        setTextMessage("");
     };
 
     return (
