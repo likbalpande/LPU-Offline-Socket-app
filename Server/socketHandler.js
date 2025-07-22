@@ -4,7 +4,7 @@ const users = []; // [..., {username: "Likhilesh", socketId: 'an123qdniuwenf" }
 const socketHandler = (socketServer) => {
     // event
     socketServer.on("connection", (socket) => {
-        console.log("socket --->", socket.id);
+        console.log("hello --->", socket.id);
         // here socket variable will be tour client
         // like there ware req variable in REST APIs
         // so if you want to do anything related to single user
@@ -21,7 +21,7 @@ const socketHandler = (socketServer) => {
             } else {
                 users.push({ username: data.username, socketId: socket.id, isOnline: true });
             }
-            console.log("new users list --> ", users);
+            // console.log("new users list --> ", users);
 
             // to send the updated users list to every client
             users.forEach((user) => {
@@ -29,6 +29,29 @@ const socketHandler = (socketServer) => {
                 socketServer.to(user.socketId).emit("users-list", {
                     users,
                 });
+            });
+        });
+
+        // event
+        // to receive the information from client to server
+        socket.on("outgoing-message", (data) => {
+            console.log(socket.id, "_wants to say_", data.message, "_to_", data.username);
+
+            const senderSocketId = socket.id;
+            const receiverSocketId = users.find((elem) => elem.username === data.username)?.socketId;
+            const senderUsername = users.find((elem) => elem.socketId === senderSocketId)?.username;
+            const receiverUsername = data.username;
+
+            socketServer.to(senderSocketId).emit("incoming-message", {
+                message: data.message,
+                senderUsername,
+                receiverUsername,
+            });
+
+            socketServer.to(receiverSocketId).emit("incoming-message", {
+                message: data.message,
+                senderUsername,
+                receiverUsername,
             });
         });
 
