@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const chatSocket = io("http://localhost:4800", {
+const chatSocket = io(import.meta.env.VITE_BACKEND_URL, {
     autoConnect: false,
 });
 
